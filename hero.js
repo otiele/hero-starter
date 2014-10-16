@@ -44,7 +44,7 @@ var moves = {
   // Aggressor
   aggressor: function(gameData, helpers) {
     // Here, we ask if your hero's health is below 30
-    if (gameData.activeHero.health <= 25){
+    if (gameData.activeHero.health <= 30){
       // If it is, head towards the nearest health well
       return helpers.findNearestHealthWell(gameData);
     } else {
@@ -164,6 +164,33 @@ var moves = {
       //Heal no matter what if low health
       return directionToHealthWell;
     } else if (myHero.health < 100 && distanceToHealthWell === 1) {
+      //Heal if you aren't full health and are close to a health well already
+      return directionToHealthWell;
+    } else {
+      //If healthy, go capture a diamond mine!
+      return helpers.findNearestUnownedDiamondMine(gameData);
+    }
+  },
+  
+  // The Olaf Guy
+  // This hero will attempt to capture diamond mines (even those owned by teammates).
+  olafGuy :function(gameData, helpers) {
+    var myHero = gameData.activeHero;
+
+    //Get stats on the nearest health well
+    var healthWellStats = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(boardTile) {
+      if (boardTile.type === 'HealthWell') {
+        return true;
+      }
+    });
+
+    var distanceToHealthWell = healthWellStats.distance;
+    var directionToHealthWell = healthWellStats.direction;
+
+    if (myHero.health < 25) {
+      //Heal no matter what if low health
+      return directionToHealthWell;
+    } else if (myHero.health < 90 && distanceToHealthWell === 2) {
       //Heal if you aren't full health and are close to a health well already
       return directionToHealthWell;
     } else {
